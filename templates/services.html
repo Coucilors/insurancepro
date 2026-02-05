@@ -1,0 +1,407 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Services - InsurancePro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        background: var(--gradient-primary);
+        padding: 160px 0 80px;
+        text-align: center;
+        color: var(--white);
+    }
+
+    .page-header h1 {
+        font-size: 48px;
+        font-weight: 800;
+        margin-bottom: 16px;
+    }
+
+    .page-header p {
+        font-size: 20px;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .services-detail {
+        padding: 100px 0;
+    }
+
+    .services-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    .service-detail-card {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+        margin-bottom: 80px;
+    }
+
+    .service-detail-card:nth-child(even) {
+        direction: rtl;
+    }
+
+    .service-detail-card:nth-child(even) > * {
+        direction: ltr;
+    }
+
+    .service-image-large {
+        height: 400px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 100px;
+        color: var(--white);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .service-detail-card:nth-child(1) .service-image-large {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .service-detail-card:nth-child(2) .service-image-large {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .service-detail-card:nth-child(3) .service-image-large {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .service-detail-card:nth-child(4) .service-image-large {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .service-detail-content h2 {
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 20px;
+    }
+
+    .service-detail-content p {
+        color: var(--text-light);
+        line-height: 1.8;
+        margin-bottom: 24px;
+        font-size: 17px;
+    }
+
+    .service-features {
+        list-style: none;
+        margin-bottom: 32px;
+    }
+
+    .service-features li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+        color: var(--text-dark);
+    }
+
+    .service-features li i {
+        color: var(--accent-color);
+        font-size: 20px;
+    }
+
+    .pricing-section {
+        padding: 100px 0;
+        background: var(--bg-light);
+    }
+
+    .section-header {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 60px;
+    }
+
+    .section-header h2 {
+        font-size: 42px;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 16px;
+    }
+
+    .section-header p {
+        font-size: 18px;
+        color: var(--text-light);
+    }
+
+    .pricing-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .pricing-card {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: 40px;
+        text-align: center;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .pricing-card.featured {
+        border: 2px solid var(--accent-color);
+        transform: scale(1.05);
+    }
+
+    .pricing-card.featured:hover {
+        transform: scale(1.05) translateY(-10px);
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--gradient-accent);
+        color: var(--white);
+        padding: 8px 24px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .pricing-card h3 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .pricing-card .price {
+        font-size: 48px;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+    }
+
+    .pricing-card .price span {
+        font-size: 16px;
+        color: var(--text-light);
+        font-weight: 400;
+    }
+
+    .pricing-card > p {
+        color: var(--text-light);
+        margin-bottom: 24px;
+    }
+
+    .pricing-features {
+        list-style: none;
+        margin-bottom: 32px;
+        text-align: left;
+    }
+
+    .pricing-features li {
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .pricing-features li:last-child {
+        border-bottom: none;
+    }
+
+    .pricing-features li i {
+        color: var(--accent-color);
+    }
+
+    @media (max-width: 1024px) {
+        .service-detail-card {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        .service-detail-card:nth-child(even) {
+            direction: ltr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 36px;
+        }
+
+        .service-detail-content h2 {
+            font-size: 28px;
+        }
+
+        .pricing-card.featured {
+            transform: none;
+        }
+
+        .pricing-card.featured:hover {
+            transform: translateY(-10px);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Our Insurance Services</h1>
+    <p>Comprehensive protection solutions for every aspect of your life</p>
+</section>
+
+<!-- Services Detail Section -->
+<section class="services-detail">
+    <div class="services-container">
+        <!-- Life Insurance -->
+        <div class="service-detail-card">
+            <div class="service-image-large">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            <div class="service-detail-content">
+                <h2>Life Insurance</h2>
+                <p>Secure your family's financial future with our comprehensive life insurance plans. Whether you need term life for temporary coverage or whole life for permanent protection, we have options to fit every budget and life stage.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check-circle"></i> Coverage amounts from $50,000 to $5 million</li>
+                    <li><i class="fas fa-check-circle"></i> Term lengths: 10, 20, or 30 years</li>
+                    <li><i class="fas fa-check-circle"></i> No medical exam options available</li>
+                    <li><i class="fas fa-check-circle"></i> Cash value accumulation on whole life</li>
+                    <li><i class="fas fa-check-circle"></i> Accelerated death benefits</li>
+                </ul>
+                <a href="{{ url_for('contact') }}" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Get a Quote
+                </a>
+            </div>
+        </div>
+
+        <!-- Health Insurance -->
+        <div class="service-detail-card">
+            <div class="service-image-large">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <div class="service-detail-content">
+                <h2>Health Insurance</h2>
+                <p>Access quality healthcare without breaking the bank. Our health insurance plans cover everything from routine checkups to major medical procedures, with options for individuals, families, and businesses.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check-circle"></i> Individual and family plans</li>
+                    <li><i class="fas fa-check-circle"></i> Group health for businesses</li>
+                    <li><i class="fas fa-check-circle"></i> Dental and vision add-ons</li>
+                    <li><i class="fas fa-check-circle"></i> Prescription drug coverage</li>
+                    <li><i class="fas fa-check-circle"></i> Telehealth services included</li>
+                </ul>
+                <a href="{{ url_for('contact') }}" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Get a Quote
+                </a>
+            </div>
+        </div>
+
+        <!-- Home Insurance -->
+        <div class="service-detail-card">
+            <div class="service-image-large">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="service-detail-content">
+                <h2>Home Insurance</h2>
+                <p>Your home is your biggest investment - protect it with our comprehensive home insurance. From natural disasters to theft and liability, we've got you covered with policies tailored to your property and location.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check-circle"></i> Dwelling and structure coverage</li>
+                    <li><i class="fas fa-check-circle"></i> Personal property protection</li>
+                    <li><i class="fas fa-check-circle"></i> Liability coverage up to $1 million</li>
+                    <li><i class="fas fa-check-circle"></i> Loss of use/additional living expenses</li>
+                    <li><i class="fas fa-check-circle"></i> Flood and earthquake options</li>
+                </ul>
+                <a href="{{ url_for('contact') }}" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Get a Quote
+                </a>
+            </div>
+        </div>
+
+        <!-- Auto Insurance -->
+        <div class="service-detail-card">
+            <div class="service-image-large">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="service-detail-content">
+                <h2>Auto Insurance</h2>
+                <p>Hit the road with confidence knowing you're protected. Our auto insurance offers comprehensive coverage options including liability, collision, comprehensive, and uninsured motorist protection at competitive rates.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check-circle"></i> Liability coverage (state minimums and beyond)</li>
+                    <li><i class="fas fa-check-circle"></i> Collision and comprehensive</li>
+                    <li><i class="fas fa-check-circle"></i> Roadside assistance</li>
+                    <li><i class="fas fa-check-circle"></i> Rental car reimbursement</li>
+                    <li><i class="fas fa-check-circle"></i> Multi-vehicle discounts</li>
+                </ul>
+                <a href="{{ url_for('contact') }}" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Get a Quote
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="pricing-section">
+    <div class="section-header">
+        <h2>Simple, Transparent Pricing</h2>
+        <p>Choose the plan that works best for your needs and budget</p>
+    </div>
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <h3>Basic</h3>
+            <div class="price">$29<span>/month</span></div>
+            <p>Perfect for individuals just starting out</p>
+            <ul class="pricing-features">
+                <li><i class="fas fa-check"></i> $100K coverage limit</li>
+                <li><i class="fas fa-check"></i> Email support</li>
+                <li><i class="fas fa-check"></i> Basic claims processing</li>
+                <li><i class="fas fa-check"></i> Annual policy review</li>
+                <li><i class="fas fa-check"></i> Online account access</li>
+            </ul>
+            <a href="{{ url_for('contact') }}" class="btn btn-outline" style="width: 100%;">Get Started</a>
+        </div>
+
+        <div class="pricing-card featured">
+            <div class="featured-badge">Most Popular</div>
+            <h3>Standard</h3>
+            <div class="price">$79<span>/month</span></div>
+            <p>Best value for families and professionals</p>
+            <ul class="pricing-features">
+                <li><i class="fas fa-check"></i> $500K coverage limit</li>
+                <li><i class="fas fa-check"></i> 24/7 phone support</li>
+                <li><i class="fas fa-check"></i> Priority claims processing</li>
+                <li><i class="fas fa-check"></i> Semi-annual policy review</li>
+                <li><i class="fas fa-check"></i> Mobile app access</li>
+                <li><i class="fas fa-check"></i> Discounts on bundled policies</li>
+            </ul>
+            <a href="{{ url_for('contact') }}" class="btn btn-primary" style="width: 100%;">Get Started</a>
+        </div>
+
+        <div class="pricing-card">
+            <h3>Premium</h3>
+            <div class="price">$149<span>/month</span></div>
+            <p>Complete protection for high-net-worth individuals</p>
+            <ul class="pricing-features">
+                <li><i class="fas fa-check"></i> $2M+ coverage limit</li>
+                <li><i class="fas fa-check"></i> Dedicated account manager</li>
+                <li><i class="fas fa-check"></i> Express claims processing</li>
+                <li><i class="fas fa-check"></i> Quarterly policy review</li>
+                <li><i class="fas fa-check"></i> All digital features</li>
+                <li><i class="fas fa-check"></i> Concierge services</li>
+            </ul>
+            <a href="{{ url_for('contact') }}" class="btn btn-outline" style="width: 100%;">Get Started</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Campaigns - Admin | InsurancePro{% endblock %}
+{% block page_title %}Email Campaigns{% endblock %}
+
+{% block header_actions %}
+<a href="{{ url_for('new_campaign') }}" class="btn btn-primary">
+    <i class="fas fa-plus"></i> Create Campaign
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2><i class="fas fa-envelope" style="margin-right: 10px;"></i>All Campaigns</h2>
+        <div style="display: flex; gap: 12px;">
+            <span style="color: var(--text-light); font-size: 14px; align-self: center;">
+                {{ campaigns|length }} campaign(s)
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Campaign</th>
+                        <th>Subject</th>
+                        <th>Template</th>
+                        <th>Status</th>
+                        <th>Recipients</th>
+                        <th>Sent</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for campaign in campaigns %}
+                    <tr>
+                        <td>
+                            <strong>{{ campaign.name }}</strong>
+                            {% if campaign.target_segment != 'all' %}
+                                <br><small style="color: var(--text-light);">Target: {{ campaign.target_segment.title() }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ campaign.subject }}</td>
+                        <td>
+                            <span style="text-transform: capitalize;">{{ campaign.template_type }}</span>
+                        </td>
+                        <td>
+                            <span class="status-badge {{ campaign.status }}">{{ campaign.status.title() }}</span>
+                        </td>
+                        <td>{{ campaign.total_recipients }}</td>
+                        <td>
+                            {% if campaign.sent_count > 0 %}
+                                {{ campaign.sent_count }}
+                                {% if campaign.failed_count > 0 %}
+                                    <small style="color: var(--error);">({{ campaign.failed_count }} failed)</small>
+                                {% endif %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ campaign.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="{{ url_for('preview_campaign', campaign_id=campaign.id) }}" target="_blank" class="action-btn" title="Preview">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                
+                                {% if campaign.status == 'draft' %}
+                                <button class="action-btn send-campaign" data-id="{{ campaign.id }}" title="Send Campaign">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                                {% endif %}
+                                
+                                {% if campaign.status != 'sent' %}
+                                <form method="POST" action="{{ url_for('delete_campaign', campaign_id=campaign.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this campaign?');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="action-btn delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 60px; color: var(--text-light);">
+                            <i class="fas fa-envelope-open" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+                            No campaigns yet
+                            <br><br>
+                            <a href="{{ url_for('new_campaign') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Create Your First Campaign
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Campaign Stats -->
+{% if campaigns|length > 0 %}
+<div style="margin-top: 32px;">
+    <h2 style="margin-bottom: 24px; font-size: 20px;">Campaign Statistics</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ campaigns|length }}</h3>
+                <p>Total Campaigns</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ campaigns|selectattr('status', 'equalto', 'sent')|list|length }}</h3>
+                <p>Sent Campaigns</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-paper-plane"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ campaigns|sum(attribute='sent_count') }}</h3>
+                <p>Total Emails Sent</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="fas fa-edit"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ campaigns|selectattr('status', 'equalto', 'draft')|list|length }}</h3>
+                <p>Draft Campaigns</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Handle send campaign button clicks
+    document.querySelectorAll('.send-campaign').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const campaignId = this.dataset.id;
+            const row = this.closest('tr');
+            
+            if (!confirm('Are you sure you want to send this campaign to all subscribers? This action cannot be undone.')) {
+                return;
+            }
+            
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            try {
+                const response = await fetch(`/admin/campaigns/${campaignId}/send`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                // Show flash message
+                const flashDiv = document.createElement('div');
+                flashDiv.className = `flash-message ${data.success ? 'success' : 'error'}`;
+                flashDiv.innerHTML = `
+                    <i class="fas fa-${data.success ? 'check-circle' : 'exclamation-circle'}"></i>
+                    ${data.message}
+                `;
+                document.querySelector('.content-area').insertBefore(flashDiv, document.querySelector('.content-area').firstChild);
+                
+                // Auto-hide flash message
+                setTimeout(() => {
+                    flashDiv.style.opacity = '0';
+                    flashDiv.style.transform = 'translateX(-20px)';
+                    setTimeout(() => flashDiv.remove(), 300);
+                }, 5000);
+                
+                if (data.success) {
+                    // Update the row status
+                    const statusCell = row.querySelector('.status-badge');
+                    statusCell.className = 'status-badge sent';
+                    statusCell.textContent = 'Sent';
+                    
+                    // Remove action buttons
+                    const actionsCell = row.querySelector('.table-actions');
+                    actionsCell.innerHTML = `
+                        <a href="{{ url_for('preview_campaign', campaign_id=0) }}".replace('0', campaignId) target="_blank" class="action-btn" title="Preview">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    `;
+                    
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                
+                const flashDiv = document.createElement('div');
+                flashDiv.className = 'flash-message error';
+                flashDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle"></i>
+                    An error occurred while sending the campaign.
+                `;
+                document.querySelector('.content-area').insertBefore(flashDiv, document.querySelector('.content-area').firstChild);
+            }
+        });
+    });
+</script>
+{% endblock %}

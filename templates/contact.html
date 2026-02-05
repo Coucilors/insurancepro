@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - InsurancePro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        background: var(--gradient-primary);
+        padding: 160px 0 80px;
+        text-align: center;
+        color: var(--white);
+    }
+
+    .page-header h1 {
+        font-size: 48px;
+        font-weight: 800;
+        margin-bottom: 16px;
+    }
+
+    .page-header p {
+        font-size: 20px;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .contact-section {
+        padding: 100px 0;
+    }
+
+    .contact-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+    }
+
+    .contact-info h2 {
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 24px;
+    }
+
+    .contact-info > p {
+        color: var(--text-light);
+        line-height: 1.8;
+        margin-bottom: 40px;
+        font-size: 17px;
+    }
+
+    .contact-methods {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .contact-method {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 24px;
+        background: var(--bg-light);
+        border-radius: var(--radius-md);
+        transition: all 0.3s ease;
+    }
+
+    .contact-method:hover {
+        background: var(--white);
+        box-shadow: var(--shadow-md);
+    }
+
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .contact-method-content h4 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--text-dark);
+    }
+
+    .contact-method-content p {
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+
+    .contact-form-wrapper {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: 40px;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .contact-form-wrapper h3 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--text-dark);
+    }
+
+    .contact-form-wrapper > p {
+        color: var(--text-light);
+        margin-bottom: 32px;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e5e7eb;
+        border-radius: var(--radius-sm);
+        font-size: 16px;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        background: var(--white);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 16px;
+        background: var(--gradient-primary);
+        color: var(--white);
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(30, 60, 114, 0.3);
+    }
+
+    .map-section {
+        padding: 0 0 100px;
+    }
+
+    .map-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    .map-placeholder {
+        height: 400px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 24px;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .map-placeholder i {
+        font-size: 60px;
+    }
+
+    .form-error {
+        color: #ef4444;
+        font-size: 14px;
+        margin-top: 6px;
+    }
+
+    @media (max-width: 1024px) {
+        .contact-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 36px;
+        }
+
+        .contact-info h2 {
+            font-size: 28px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .contact-form-wrapper {
+            padding: 30px 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Contact Us</h1>
+    <p>Get in touch with our team for personalized insurance solutions</p>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section">
+    <div class="contact-container">
+        <div class="contact-info">
+            <h2>Let's Start a Conversation</h2>
+            <p>Have questions about our insurance products? Need a custom quote? Our experienced advisors are here to help you find the perfect coverage for your needs.</p>
+
+            <div class="contact-methods">
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="contact-method-content">
+                        <h4>Phone</h4>
+                        <p>1-800-123-4567<br>Mon-Fri: 9AM - 6PM EST</p>
+                    </div>
+                </div>
+
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-method-content">
+                        <h4>Email</h4>
+                        <p>info@insurancepro.com<br>support@insurancepro.com</p>
+                    </div>
+                </div>
+
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-method-content">
+                        <h4>Office</h4>
+                        <p>123 Insurance Avenue, Suite 100<br>New York, NY 10001</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form-wrapper">
+            <h3>Send Us a Message</h3>
+            <p>Fill out the form below and we'll get back to you within 24 hours.</p>
+
+            <form method="POST" action="{{ url_for('contact') }}">
+                {{ form.hidden_tag() }}
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        {{ form.name(placeholder="John Doe") }}
+                        {% if form.name.errors %}
+                            {% for error in form.name.errors %}
+                                <span class="form-error">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        {{ form.email(placeholder="john@example.com") }}
+                        {% if form.email.errors %}
+                            {% for error in form.email.errors %}
+                                <span class="form-error">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        {{ form.phone(placeholder="+1 (555) 123-4567") }}
+                        {% if form.phone.errors %}
+                            {% for error in form.phone.errors %}
+                                <span class="form-error">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        {{ form.subject(placeholder="Insurance Inquiry") }}
+                        {% if form.subject.errors %}
+                            {% for error in form.subject.errors %}
+                                <span class="form-error">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    {{ form.message(placeholder="Tell us about your insurance needs...") }}
+                    {% if form.message.errors %}
+                        {% for error in form.message.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="map-section">
+    <div class="map-container">
+        <div class="map-placeholder">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Interactive Map - 123 Insurance Avenue, New York, NY 10001</span>
+        </div>
+    </div>
+</section>
+{% endblock %}
