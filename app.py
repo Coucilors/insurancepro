@@ -13,6 +13,8 @@ from email_validator import validate_email, EmailNotValidError
 import os
 import secrets
 from itsdangerous import URLSafeTimedSerializer
+from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(32))
@@ -33,6 +35,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 1800  # 30 minutes
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+csrf = CSRFProtect(app)
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 # Email configuration - configure these via environment variables
@@ -411,7 +414,8 @@ def admin_dashboard():
         'unread_messages': ContactMessage.query.filter_by(is_read=False).count()
     }
     recent_campaigns = Campaign.query.order_by(Campaign.created_at.desc()).limit(5).all()
-    return render_template('admin/dashboard.html', stats=stats, campaigns=recent_campaigns)
+    unread_count = ContactMessage.query.filter_by(is_read=False).count()
+    return render_template('admin/dashboard.html', stats=stats, campaigns=recent_campaigns, unread_messages=unread_count)
 
 @app.route('/admin/subscribers')
 @login_required
@@ -426,13 +430,15 @@ def admin_subscribers():
     subscribers = query.order_by(Subscriber.subscribed_at.desc()).paginate(
         page=page, per_page=20, error_out=False
     )
-    return render_template('admin/subscribers.html', subscribers=subscribers, status=status)
+    unread_count = ContactMessage.query.filter_by(is_read=False).count()
+    return render_template('admin/subscribers.html', subscribers=subscribers, status=status, unread_messages=unread_count)
 
 @app.route('/admin/campaigns')
 @login_required
 def admin_campaigns():
     campaigns = Campaign.query.order_by(Campaign.created_at.desc()).all()
-    return render_template('admin/campaigns.html', campaigns=campaigns)
+    unread_count = ContactMessage.query.filter_by(is_read=False).count()
+    return render_template('admin/campaigns.html', campaigns=campaigns, unread_messages=unread_count)
 
 @app.route('/admin/campaigns/new', methods=['GET', 'POST'])
 @login_required
@@ -451,7 +457,8 @@ def new_campaign():
         db.session.commit()
         flash('Campaign created successfully!', 'success')
         return redirect(url_for('admin_campaigns'))
-    return render_template('admin/new_campaign.html', form=form)
+    unread_count = ContactMessage.query.filter_by(is_read=False).count()
+    return render_template('admin/new_campaign.html', form=form, unread_messages=unread_count)
 
 @app.route('/admin/campaigns/<int:campaign_id>/send', methods=['POST'])
 @login_required
@@ -528,7 +535,8 @@ def delete_campaign(campaign_id):
 @login_required
 def admin_messages():
     messages = ContactMessage.query.order_by(ContactMessage.created_at.desc()).all()
-    return render_template('admin/messages.html', messages=messages)
+    unread_count = ContactMessage.query.filter_by(is_read=False).count()
+    return render_template('admin/messages.html', messages=messages, unread_messages=unread_count)
 
 @app.route('/admin/messages/<int:message_id>/read', methods=['POST'])
 @login_required
@@ -565,5 +573,14 @@ if __name__ == '__main__':
 # Initialize database and create admin user on startup
 with app.app_context():
     init_db()
+
+
+
+
+
+
+
+
+
 
 
