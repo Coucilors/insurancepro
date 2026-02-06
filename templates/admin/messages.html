@@ -52,7 +52,7 @@
                         <td>{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
                         <td>
                             <div class="table-actions">
-                                <button class="action-btn" title="View Full Message" onclick="viewMessage({{ message.id }}, '{{ message.name|replace("'", "\\'") }}', '{{ message.email }}', '{{ message.subject|replace("'", "\\'") }}', '{{ message.message|replace("'", "\\'")|replace(chr(10), "\\n") }}', '{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}')">
+                                <button class="action-btn" title="View Full Message" onclick="viewMessage({{ message.id }}, '{{ message.name|replace("'", "\\'") }}', '{{ message.email }}', '{{ message.subject|replace("'", "\\'") }}', '{{ message.message|replace("'", "\\'") }}', '{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}')">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 {% if not message.is_read %}
@@ -198,3 +198,5 @@
     });
 </script>
 {% endblock %}
+
+
