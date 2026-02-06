@@ -222,3 +222,6 @@ For issues or questions, please refer to the Flask documentation or contact the 
 ---
 
 **Built with ❤️ using Flask**
+
+
+## Deployed on Render
