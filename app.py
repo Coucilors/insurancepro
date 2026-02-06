@@ -143,6 +143,21 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
+class AddSubscriberForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    name = StringField('Name', validators=[Length(max=100)])
+    phone = StringField('Phone', validators=[Length(max=20)])
+    insurance_type = SelectField('Insurance Type', choices=[
+        ('', 'Select Type'),
+        ('life', 'Life Insurance'),
+        ('health', 'Health Insurance'),
+        ('auto', 'Auto Insurance'),
+        ('home', 'Home Insurance'),
+        ('business', 'Business Insurance'),
+        ('travel', 'Travel Insurance')
+    ])
+    submit = SubmitField('Add Subscriber')
+
 # Decorators
 def login_required(f):
     @wraps(f)
@@ -433,6 +448,30 @@ def admin_subscribers():
     unread_count = ContactMessage.query.filter_by(is_read=False).count()
     return render_template('admin/subscribers.html', subscribers=subscribers, status=status, unread_messages=unread_count)
 
+@app.route('/admin/subscribers/add', methods=['POST'])
+@login_required
+def add_subscriber():
+    form = AddSubscriberForm()
+    if form.validate_on_submit():
+        existing = Subscriber.query.filter_by(email=form.email.data).first()
+        if existing:
+            flash('Subscriber with this email already exists.', 'error')
+        else:
+            subscriber = Subscriber(
+                email=form.email.data,
+                name=form.name.data,
+                phone=form.phone.data,
+                insurance_type=form.insurance_type.data
+            )
+            db.session.add(subscriber)
+            db.session.commit()
+            flash('Subscriber added successfully!', 'success')
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f'{field}: {error}', 'error')
+    return redirect(url_for('admin_subscribers'))
+
 @app.route('/admin/campaigns')
 @login_required
 def admin_campaigns():
@@ -573,6 +612,9 @@ if __name__ == '__main__':
 # Initialize database and create admin user on startup
 with app.app_context():
     init_db()
+
+
+
 
 
 
