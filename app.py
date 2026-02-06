@@ -554,6 +554,7 @@ if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
 
 
-# Auto-initialize on startup
+# Initialize database and create admin user on startup
 with app.app_context():
     init_db()
+
