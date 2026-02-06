@@ -7,3 +7,4 @@ email-validator==2.1.0
 itsdangerous==2.1.2
 Werkzeug==3.0.1
 gunicorn==21.2.0
+psycopg2-binary==2.9.9

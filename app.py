@@ -16,7 +16,15 @@ from itsdangerous import URLSafeTimedSerializer
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(32))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///insurance.db'
+database_url = os.environ.get('DATABASE_URL')
+if database_url:
+    # Render PostgreSQL
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Local SQLite
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///insurance.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
@@ -557,4 +565,5 @@ if __name__ == '__main__':
 # Initialize database and create admin user on startup
 with app.app_context():
     init_db()
+
 
